@@ -32,12 +32,11 @@ gap_clean <- gap %>%
 ```
 
 ```{r}
-gdb_path <- here::here('data','PriorityLandscapes18_2.gdb')
+gdb_path <- here::here('data','ds1327', 'tiff', 'ds1327.tif')
 
 
 
-habitat <- st_read(gdb_path)
-
+habitat <- rast(gdb_path)
 ```
 
 ```{r}
@@ -67,5 +66,6 @@ birds_gap_sum <- birds_joined %>%
   group_by(gap_sts) %>% 
   summarize(sum(observation_count))
 ```
+
 
 
