@@ -1,0 +1,71 @@
+---
+title: "spatial_join"
+format: html
+editor: visual
+---
+```{r}
+pacman::p_load('tidyverse', 
+               'sf', 
+               'here',
+               'janitor',
+               'tmap', 
+               'kableExtra',
+               'patchwork',
+               'ggthemes',
+               'colorRamps',
+               'stars',
+               'terra')
+```
+
+
+read gdb
+
+```{r}
+gap <- st_read(here::here('data',
+                          'PADUS4_1_State_CA_GDB_KMZ', 
+                          'PADUS4_1_StateCA.gdb'), 
+                          quiet = TRUE) %>% 
+  clean_names() 
+
+gap_clean <- gap %>% 
+  select(own_type,gap_sts, mang_type, Shape )
+```
+
+```{r}
+gdb_path <- here::here('data','PriorityLandscapes18_2.gdb')
+
+
+
+habitat <- st_read(gdb_path)
+
+```
+
+```{r}
+ownership <- st_read(here::here('data','ownership25_1.gdb'))
+```
+```{r}
+point_count <- read_csv(here::here('data', 'point_count.csv')) %>% 
+  clean_names()
+```
+
+```{r}
+point_count_geo <- point_count %>% 
+  st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
+  st_transform(st_crs(gap_clean))
+```
+
+```{r}
+birds_joined <- st_join(
+  point_count_geo,
+  gap_clean,
+  join = st_intersects   # points inside polygons
+)
+```
+
+```{r}
+birds_gap_sum <- birds_joined %>% 
+  group_by(gap_sts) %>% 
+  summarize(sum(observation_count))
+```
+
+
