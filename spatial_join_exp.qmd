@@ -3,6 +3,8 @@ title: "spatial_join"
 format: html
 editor: visual
 ---
+Load packages
+
 ```{r}
 pacman::p_load('tidyverse', 
                'sf', 
@@ -17,8 +19,27 @@ pacman::p_load('tidyverse',
                'terra')
 ```
 
+Read Rast
 
-read gdb
+```{r}
+rast_path <- here::here('data','ds1327', 'tiff', 'ds1327.tif')
+
+gdb_path <- here::here('data','ds1327', 'ds1327.gdb')
+
+habitat <- rast(gdb_path)
+```
+
+
+```{r}
+whr_type <- habitat
+veg_type <- habitat
+
+activeCat(veg_type, layer = 1) <- 'LIFEFORM'
+
+activeCat(whr_type, layer = 1) <- 'WHRTYPE'
+```
+
+Read GAP GDB
 
 ```{r}
 gap <- st_read(here::here('data',
@@ -28,24 +49,19 @@ gap <- st_read(here::here('data',
   clean_names() 
 
 gap_clean <- gap %>% 
-  select(own_type,gap_sts, mang_type, Shape )
+  select(own_type,gap_sts, mang_type, Shape ) %>% 
+  st_transform(crs(veg_type))
 ```
 
-```{r}
-gdb_path <- here::here('data','ds1327', 'tiff', 'ds1327.tif')
 
+Read Point Count
 
-
-habitat <- rast(gdb_path)
-```
-
-```{r}
-ownership <- st_read(here::here('data','ownership25_1.gdb'))
-```
 ```{r}
 point_count <- read_csv(here::here('data', 'point_count.csv')) %>% 
   clean_names()
 ```
+
+Make Geodatabase 
 
 ```{r}
 point_count_geo <- point_count %>% 
@@ -53,13 +69,14 @@ point_count_geo <- point_count %>%
   st_transform(st_crs(gap_clean))
 ```
 
+Join with GAP 
+
 ```{r}
-birds_joined <- st_join(
-  point_count_geo,
-  gap_clean,
-  join = st_intersects   # points inside polygons
-)
+birds_joined <- st_join(point_count_geo, gap_clean["gap_sts"])
+
 ```
+
+Summary of by gap type 
 
 ```{r}
 birds_gap_sum <- birds_joined %>% 
@@ -67,5 +84,45 @@ birds_gap_sum <- birds_joined %>%
   summarize(sum(observation_count))
 ```
 
+merge everything we need
+
+```{r}
+veg_id <- terra::extract(veg_type, vect(birds_joined))[,1]
+
+cats <- levels(veg_type)[[1]]
+
+birds_joined$veg_id <- veg_id
+birds_joined$veg_type <- cats$LIFEFORM[match(veg_id, cats$Value)]
+
+birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
+```
+
+summary of gap status and veg_type 
+
+```{r}
+birds_sum <- birds_joined %>% 
+  group_by(gap_sts, veg_type) %>% 
+  summarize(observations = sum(observation_count)) %>% 
+ arrange(desc(observations))
+
+birds_sum %>% 
+  kable(format = "html", digits = 3,
+      caption = "Observations, vegitation type, and gap status") %>% 
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+    full_width = FALSE,
+    position   = "center",
+    font_size  = 14
+  ) %>% 
+  row_spec(0, bold = TRUE, color = "white", background = "#A0185A") %>%  # header
+  row_spec(1:nrow(birds_sum), color = "black", background = "#FFC4EB")
+```
+
+```{r}
+plot(veg_type)
+plot(vect(birds_sum), add = TRUE)
+```
+
+![](site_points_animation.gif)
 
 
