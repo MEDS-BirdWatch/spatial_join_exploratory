@@ -2,6 +2,8 @@
 title: "spatial_join"
 format: html
 editor: visual
+warning: FALSE
+code-fold: true
 ---
 Load packages
 
@@ -19,7 +21,7 @@ pacman::p_load('tidyverse',
                'terra')
 ```
 
-Read Rast
+Read Rast (calfire)
 
 ```{r}
 rast_path <- here::here('data','ds1327', 'tiff', 'ds1327.tif')
@@ -27,6 +29,15 @@ rast_path <- here::here('data','ds1327', 'tiff', 'ds1327.tif')
 gdb_path <- here::here('data','ds1327', 'ds1327.gdb')
 
 habitat <- rast(gdb_path)
+```
+
+Read Landfire rast
+
+```{r}
+rast_path <- here::here('data', 'LF2024_FBFM13_250_CONUS', 'Tif', 'LC24_F13_250.tif')
+
+landfire <- rast(rast_path)
+
 ```
 
 
@@ -50,7 +61,15 @@ gap <- st_read(here::here('data',
 
 gap_clean <- gap %>% 
   select(own_type,gap_sts, mang_type, Shape ) %>% 
-  st_transform(crs(veg_type))
+  st_transform(crs(landfire))
+```
+
+Crop landfire to CA
+
+```{r}
+landfire_CA <- crop(landfire, gap_clean)
+
+
 ```
 
 
@@ -66,7 +85,7 @@ Make Geodatabase
 ```{r}
 point_count_geo <- point_count %>% 
   st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
-  st_transform(st_crs(gap_clean))
+  st_transform(st_crs(landfire_CA))
 ```
 
 Join with GAP 
@@ -87,15 +106,27 @@ birds_gap_sum <- birds_joined %>%
 merge everything we need
 
 ```{r}
-veg_id <- terra::extract(veg_type, vect(birds_joined))[,1]
+veg_id <- terra::extract(veg_type, vect(birds_joined), ID = FALSE)[,1]
 
-cats <- levels(veg_type)[[1]]
+birds_joined$veg_type <- veg_id
 
-birds_joined$veg_id <- veg_id
-birds_joined$veg_type <- cats$LIFEFORM[match(veg_id, cats$Value)]
+
+birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
+
+
+```
+
+Landfire join
+
+```{r}
+land_id <- terra::extract(landfire_CA, vect(birds_joined), ID = FALSE)[,1]
+
+birds_joined$land_type <- land_id
+
 
 birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
 ```
+
 
 summary of gap status and veg_type 
 
@@ -103,7 +134,7 @@ summary of gap status and veg_type
 birds_sum <- birds_joined %>% 
   group_by(gap_sts, veg_type) %>% 
   summarize(observations = sum(observation_count)) %>% 
- arrange(desc(observations))
+ arrange(desc(observations)) 
 
 birds_sum %>% 
   kable(format = "html", digits = 3,
@@ -119,10 +150,27 @@ birds_sum %>%
 ```
 
 ```{r}
+
+```
+
+```{r}
 plot(veg_type)
 plot(vect(birds_sum), add = TRUE)
 ```
 
-![](site_points_animation.gif)
+```{r}
+point_count %>% 
+  select(c(study_area, observation_count, decimal_latitude, decimal_longitude)) %>% 
+  head(10) %>% 
+  dput()
+
+```
+
+```{r}
+cats(landfire_CA) %>% 
+  head() %>% 
+  dput()
+```
+
 
 
