@@ -31,23 +31,20 @@ gdb_path <- here::here('data','ds1327', 'ds1327.gdb')
 habitat <- rast(gdb_path)
 ```
 
-Read Landfire rast
+ Read Landfire rast (removed 1/24)
 
 ```{r}
-rast_path <- here::here('data', 'LF2024_FBFM13_250_CONUS', 'Tif', 'LC24_F13_250.tif')
+# rast_path <- here::here('data', 'LF2024_FBFM13_250_CONUS', 'Tif', 'LC24_F13_250.tif')
 
-landfire <- rast(rast_path)
+# landfire <- rast(rast_path)
 
 ```
 
 
 ```{r}
-whr_type <- habitat
 veg_type <- habitat
 
 activeCat(veg_type, layer = 1) <- 'LIFEFORM'
-
-activeCat(whr_type, layer = 1) <- 'WHRTYPE'
 ```
 
 Read GAP GDB
@@ -61,14 +58,13 @@ gap <- st_read(here::here('data',
 
 gap_clean <- gap %>% 
   select(own_type,gap_sts, mang_type, Shape ) %>% 
-  st_transform(crs(landfire))
+  st_transform(crs(veg_type))
 ```
 
-Crop landfire to CA
+Crop landfire to CA (removed 1/24)
 
 ```{r}
-landfire_CA <- crop(landfire, gap_clean)
-
+#landfire_CA <- crop(landfire, gap_clean)
 
 ```
 
@@ -79,11 +75,17 @@ Read Point Count
 point_count <- read_csv(here::here('data', 'point_count.csv')) %>% 
   clean_names()
 ```
-
-Make Geodatabase 
+Read area search 
 
 ```{r}
-point_count_geo <- point_count %>% 
+area_search <- read_csv(here::here('data', 'area_search.csv')) %>% 
+  clean_names()
+```
+
+Join both and make Geodatabase 
+
+```{r}
+point_area_geo <- full_join(area_search, point_count) %>% 
   st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
   st_transform(st_crs(landfire_CA))
 ```
@@ -91,7 +93,7 @@ point_count_geo <- point_count %>%
 Join with GAP 
 
 ```{r}
-birds_joined <- st_join(point_count_geo, gap_clean["gap_sts"])
+birds_joined <- st_join(point_area_geo, gap_clean["gap_sts"])
 
 ```
 
@@ -100,7 +102,7 @@ Summary of by gap type
 ```{r}
 birds_gap_sum <- birds_joined %>% 
   group_by(gap_sts) %>% 
-  summarize(sum(observation_count))
+  summarize(sum(observation_count, na.rm = TRUE))
 ```
 
 merge everything we need
@@ -110,21 +112,18 @@ veg_id <- terra::extract(veg_type, vect(birds_joined), ID = FALSE)[,1]
 
 birds_joined$veg_type <- veg_id
 
-
 birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
-
 
 ```
 
 Landfire join
 
 ```{r}
-land_id <- terra::extract(landfire_CA, vect(birds_joined), ID = FALSE)[,1]
+#land_id <- terra::extract(landfire_CA, vect(birds_joined), ID = FALSE)[,1]
 
-birds_joined$land_type <- land_id
+#birds_joined$land_type <- land_id
 
-
-birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
+#birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
 ```
 
 
@@ -133,7 +132,7 @@ summary of gap status and veg_type
 ```{r}
 birds_sum <- birds_joined %>% 
   group_by(gap_sts, veg_type) %>% 
-  summarize(observations = sum(observation_count)) %>% 
+  summarize(observations = sum(observation_count, na.rm = TRUE)) %>% 
  arrange(desc(observations)) 
 
 birds_sum %>% 
@@ -149,28 +148,13 @@ birds_sum %>%
   row_spec(1:nrow(birds_sum), color = "black", background = "#FFC4EB")
 ```
 
-```{r}
-
-```
 
 ```{r}
 plot(veg_type)
 plot(vect(birds_sum), add = TRUE)
 ```
 
-```{r}
-point_count %>% 
-  select(c(study_area, observation_count, decimal_latitude, decimal_longitude)) %>% 
-  head(10) %>% 
-  dput()
 
-```
-
-```{r}
-cats(landfire_CA) %>% 
-  head() %>% 
-  dput()
-```
 
 
 
