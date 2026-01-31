@@ -57,8 +57,13 @@ gap <- st_read(here::here('data',
   clean_names() 
 
 gap_clean <- gap %>% 
-  select(own_type,gap_sts, mang_type, Shape ) %>% 
-  st_transform(crs(veg_type))
+  select(own_type, gap_sts, mang_type, Shape) %>% 
+  st_transform(crs(veg_type)) %>%  # transform first
+  st_cast("MULTIPOLYGON", warn = FALSE) %>%  # convert curves
+  st_make_valid() %>%  # then fix validity
+  group_by(gap_sts) %>%
+  summarise(geometry = st_union(Shape), 
+            .groups = 'drop')
 ```
 
 Crop landfire to CA (removed 1/24)
@@ -87,7 +92,7 @@ Join both and make Geodatabase
 ```{r}
 point_area_geo <- full_join(area_search, point_count) %>% 
   st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
-  st_transform(st_crs(landfire_CA))
+  st_transform(st_crs(veg_type))
 ```
 
 Join with GAP 
@@ -154,7 +159,43 @@ plot(veg_type)
 plot(vect(birds_sum), add = TRUE)
 ```
 
+```{r}
+crs(gap_clean) == crs(point_area_geo)
+crs(point_area_geo) == crs(veg_type)
 
+
+
+tm_shape(gap_clean)+
+  tm_polygons(fill = "gap_sts",
+              fill.legend = tm_legend(title = "GAP Status"),
+              fill.scale = tm_scale(values = c('#D33F49',
+                                               '#ED7D3A',
+                                               '#DCED31',
+                                               '#8AA29E')),
+              lty = 'blank')+
+tm_shape(point_area_geo)+
+  tm_dots()+
+tm_shape(secretive)+
+    tm_dots(fill = 'red')
+```
+
+```{r}
+secretive <- read_csv(here('data', 'secretive_marshbird.csv')) %>% 
+  clean_names() %>% 
+  st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
+  st_transform(st_crs(veg_type))
+
+```
+
+## Leaflet layers 
+
+```{r}
+birds_sum %>% 
+  ggplot(aes(y = observations, x = gap_sts, group=gap_sts)) +
+   geom_col(aes(fill = gap_sts),position = 'dodge')+
+  facet_wrap(~veg_type)+
+  coord_flip()
+```
 
 
 
