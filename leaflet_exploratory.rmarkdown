@@ -1,0 +1,135 @@
+---
+title: "Leaflet Exploratory"
+format: html
+editor: visual
+---
+
+Load packages
+
+```{r}
+pacman::p_load('tidyverse', 
+               'sf', 
+               'here',
+               'janitor',
+               'tmap', 
+               'kableExtra',
+               'patchwork',
+               'ggthemes',
+               'colorRamps',
+               'stars',
+               'terra',
+               'leaflet',
+               'leaflet.extras')
+```
+
+Read Rast (calfire)
+
+```{r}
+rast_path <- here::here('data','ds1327', 'tiff', 'ds1327.tif')
+
+gdb_path <- here::here('data','ds1327', 'ds1327.gdb')
+
+habitat <- rast(gdb_path)
+```
+
+
+```{r}
+veg_type <- habitat
+
+activeCat(veg_type, layer = 1) <- 'LIFEFORM'
+
+veg_type <- project(veg_type, "EPSG:4326") %>% 
+  aggregate(fact = 20)
+```
+
+Read GAP GDB
+
+```{r}
+gap <- st_read(here::here('data',
+                          'PADUS4_1_State_CA_GDB_KMZ', 
+                          'PADUS4_1_StateCA.gdb'), 
+                          quiet = TRUE) %>% 
+  clean_names() 
+
+gap_clean <- gap %>% 
+  select(own_type, gap_sts, mang_type, Shape) %>% 
+  st_transform(crs(veg_type)) %>%  # transform first
+  st_cast("MULTIPOLYGON", warn = FALSE) %>%  # convert curves
+  st_make_valid() %>%  # then fix validity
+  group_by(gap_sts) %>%
+  summarise(geometry = st_union(Shape), 
+            .groups = 'drop')
+
+gap_clean <-gap_clean %>% 
+  st_transform(4326) %>% 
+  st_simplify(dTolerance = 0.01)
+```
+
+Read Point Count
+
+```{r}
+point_count <- read_csv(here::here('data', 'point_count.csv')) %>% 
+  clean_names()
+```
+
+Read area search
+
+```{r}
+area_search <- read_csv(here::here('data', 'area_search.csv')) %>% 
+  clean_names()
+```
+
+Join both and make Geodatabase
+
+```{r}
+point_area_geo <- full_join(area_search, point_count) %>% 
+  st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) 
+```
+
+## Leaflet layers
+
+```{r}
+# Create color palettes
+gap_pal <- colorFactor(
+  palette = c("green", "yellow", "orange", "red"),  # Adjust colors as needed
+  domain = gap_clean$gap_sts  # Or whatever your column name is
+)
+
+
+
+# Map with colored polygons
+leaflet_map <- leaflet() %>% 
+  addProviderTiles(providers$Esri.WorldTerrain, group = "ESRI Terrain") %>% 
+  addMiniMap(toggleDisplay = TRUE) %>% 
+  
+  # GAP Status with colors
+  addPolygons(data = gap_clean, 
+              group = 'GAP Status',
+              fillColor = ~gap_pal(gap_sts),  # Replace gap_sts with your column
+              color = "black", 
+              weight = 1, 
+              fillOpacity = 0.6) %>% 
+  
+  # Vegetation Type with colors
+  addRasterImage(veg_type,
+                 group = 'Vegetation Type',
+                 opacity = 0.8) %>% 
+  
+  # Add legends
+  addLegend(pal = gap_pal, 
+            values = gap_clean$gap_sts,  # Replace with your column
+            title = "GAP Status",
+            position = "bottomleft",
+            group = 'GAP Status') %>%
+  
+  addLayersControl(
+    overlayGroups = c('GAP Status', 'Vegetation Type'),
+    options = layersControlOptions(collapsed = TRUE)
+  ) %>% 
+  
+  addResetMapButton()
+
+leaflet_map
+```
+
+
