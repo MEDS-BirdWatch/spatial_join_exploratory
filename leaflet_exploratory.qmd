@@ -2,6 +2,7 @@
 title: "Leaflet Exploratory"
 format: html
 editor: visual
+cache: TRUE
 ---
 
 Load packages
@@ -51,18 +52,18 @@ gap <- st_read(here::here('data',
                           quiet = TRUE) %>% 
   clean_names() 
 
-gap_clean <- gap %>% 
-  select(own_type, gap_sts, mang_type, Shape) %>% 
-  st_transform(crs(veg_type)) %>%  # transform first
-  st_cast("MULTIPOLYGON", warn = FALSE) %>%  # convert curves
-  st_make_valid() %>%  # then fix validity
-  group_by(gap_sts) %>%
-  summarise(geometry = st_union(Shape), 
-            .groups = 'drop')
+sf_use_s2(FALSE)
 
-gap_clean <-gap_clean %>% 
-  st_transform(4326) %>% 
-  st_simplify(dTolerance = 0.01)
+gap_clean <- gap %>% 
+  select(own_type, gap_sts, mang_type, Shape) %>%
+  st_cast("MULTIPOLYGON") %>%  # Convert curves FIRST
+  st_make_valid() %>%
+  st_transform(4326) %>%
+  st_simplify(dTolerance = 0.01) %>%
+  group_by(gap_sts) %>%
+  summarise(geometry = st_union(Shape), .groups = 'drop')
+
+sf_use_s2(TRUE)
 ```
 
 Read Point Count
@@ -89,6 +90,7 @@ point_area_geo <- full_join(area_search, point_count) %>%
 ## Leaflet layers
 
 ```{r}
+
 # Create color palettes
 gap_pal <- colorFactor(
   palette = c("green", "yellow", "orange", "red"),  # Adjust colors as needed
@@ -127,7 +129,7 @@ leaflet_map <- leaflet() %>%
     options = layersControlOptions(collapsed = TRUE)
   ) %>% 
   
-  addResetMapButton()
+  leaflet.extras::addResetMapButton()
 
 leaflet_map
 ```
