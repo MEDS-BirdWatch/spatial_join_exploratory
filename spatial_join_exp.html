@@ -118,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>               <span class="st">'terra'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>Read Rast</p>
+<p>Read Rast (calfire)</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -129,99 +129,142 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>habitat <span class="ot">&lt;-</span> <span class="fu">rast</span>(gdb_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
+<p>Read Landfire rast (removed 1/24)</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>whr_type <span class="ot">&lt;-</span> habitat</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>veg_type <span class="ot">&lt;-</span> habitat</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">activeCat</span>(veg_type, <span class="at">layer =</span> <span class="dv">1</span>) <span class="ot">&lt;-</span> <span class="st">'LIFEFORM'</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">activeCat</span>(whr_type, <span class="at">layer =</span> <span class="dv">1</span>) <span class="ot">&lt;-</span> <span class="st">'WHRTYPE'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rast_path &lt;- here::here('data', 'LF2024_FBFM13_250_CONUS', 'Tif', 'LC24_F13_250.tif')</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># landfire &lt;- rast(rast_path)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>veg_type <span class="ot">&lt;-</span> habitat</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">activeCat</span>(veg_type, <span class="at">layer =</span> <span class="dv">1</span>) <span class="ot">&lt;-</span> <span class="st">'LIFEFORM'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Read GAP GDB</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>gap <span class="ot">&lt;-</span> <span class="fu">st_read</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">'data'</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'PADUS4_1_State_CA_GDB_KMZ'</span>, </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'PADUS4_1_StateCA.gdb'</span>), </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>gap_clean <span class="ot">&lt;-</span> gap <span class="sc">%&gt;%</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(own_type,gap_sts, mang_type, Shape ) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="fu">crs</span>(veg_type))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>secretive <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">here</span>(<span class="st">'data'</span>, <span class="st">'secretive_marshbird.csv'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"decimal_longitude"</span>, <span class="st">"decimal_latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="fu">st_crs</span>(veg_type))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>gap <span class="ot">&lt;-</span> <span class="fu">st_read</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">'data'</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'PADUS4_1_State_CA_GDB_KMZ'</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'PADUS4_1_StateCA.gdb'</span>), </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>gap_clean <span class="ot">&lt;-</span> gap <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(own_type, gap_sts, mang_type, Shape) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="fu">crs</span>(veg_type)) <span class="sc">%&gt;%</span>  <span class="co"># transform first</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_cast</span>(<span class="st">"MULTIPOLYGON"</span>, <span class="at">warn =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span>  <span class="co"># convert curves</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_make_valid</span>() <span class="sc">%&gt;%</span>  <span class="co"># then fix validity</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gap_sts) <span class="sc">%&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">geometry =</span> <span class="fu">st_union</span>(Shape), </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">.groups =</span> <span class="st">'drop'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Crop landfire to CA (removed 1/24)</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#landfire_CA &lt;- crop(landfire, gap_clean)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Read Point Count</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>point_count <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">'data'</span>, <span class="st">'point_count.csv'</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>point_count <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">'data'</span>, <span class="st">'point_count.csv'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<p>Make Geodatabase</p>
+<p>Read area search</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>point_count_geo <span class="ot">&lt;-</span> point_count <span class="sc">%&gt;%</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"decimal_longitude"</span>, <span class="st">"decimal_latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="fu">st_crs</span>(gap_clean))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>area_search <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">'data'</span>, <span class="st">'area_search.csv'</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Join both and make Geodatabase</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>point_area_geo <span class="ot">&lt;-</span> <span class="fu">full_join</span>(area_search, point_count) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"decimal_longitude"</span>, <span class="st">"decimal_latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="fu">st_crs</span>(veg_type))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Join with GAP</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>birds_joined <span class="ot">&lt;-</span> <span class="fu">st_join</span>(point_count_geo, gap_clean[<span class="st">"gap_sts"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>birds_joined <span class="ot">&lt;-</span> <span class="fu">st_join</span>(point_area_geo, gap_clean[<span class="st">"gap_sts"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Summary of by gap type</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>birds_gap_sum <span class="ot">&lt;-</span> birds_joined <span class="sc">%&gt;%</span> </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gap_sts) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sum</span>(observation_count))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>birds_gap_sum <span class="ot">&lt;-</span> birds_joined <span class="sc">%&gt;%</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gap_sts) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sum</span>(observation_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>merge everything we need</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>veg_id <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(veg_type, <span class="fu">vect</span>(birds_joined))[,<span class="dv">1</span>]</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>cats <span class="ot">&lt;-</span> <span class="fu">levels</span>(veg_type)[[<span class="dv">1</span>]]</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>birds_joined<span class="sc">$</span>veg_id <span class="ot">&lt;-</span> veg_id</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>birds_joined<span class="sc">$</span>veg_type <span class="ot">&lt;-</span> cats<span class="sc">$</span>LIFEFORM[<span class="fu">match</span>(veg_id, cats<span class="sc">$</span>Value)]</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>birds_joined<span class="sc">$</span>gap_sts[<span class="fu">is.na</span>(birds_joined<span class="sc">$</span>gap_sts)] <span class="ot">&lt;-</span> <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>veg_id <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(veg_type, <span class="fu">vect</span>(birds_joined), <span class="at">ID =</span> <span class="cn">FALSE</span>)[,<span class="dv">1</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>birds_joined<span class="sc">$</span>veg_type <span class="ot">&lt;-</span> veg_id</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>birds_joined<span class="sc">$</span>gap_sts[<span class="fu">is.na</span>(birds_joined<span class="sc">$</span>gap_sts)] <span class="ot">&lt;-</span> <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>Landfire join</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#land_id &lt;- terra::extract(landfire_CA, vect(birds_joined), ID = FALSE)[,1]</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#birds_joined$land_type &lt;- land_id</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#birds_joined$gap_sts[is.na(birds_joined$gap_sts)] &lt;- 5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>summary of gap status and veg_type</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>birds_sum <span class="ot">&lt;-</span> birds_joined <span class="sc">%&gt;%</span> </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gap_sts, veg_type) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">observations =</span> <span class="fu">sum</span>(observation_count)) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(<span class="fu">desc</span>(observations))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>birds_sum <span class="sc">%&gt;%</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">format =</span> <span class="st">"html"</span>, <span class="at">digits =</span> <span class="dv">3</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Observations, vegitation type, and gap status"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>),</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">position   =</span> <span class="st">"center"</span>,</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">font_size  =</span> <span class="dv">14</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#A0185A"</span>) <span class="sc">%&gt;%</span>  <span class="co"># header</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(birds_sum), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">background =</span> <span class="st">"#FFC4EB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>birds_sum <span class="ot">&lt;-</span> birds_joined <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gap_sts, veg_type) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">observations =</span> <span class="fu">sum</span>(observation_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">arrange</span>(<span class="fu">desc</span>(observations)) </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>birds_sum <span class="sc">%&gt;%</span> </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">format =</span> <span class="st">"html"</span>, <span class="at">digits =</span> <span class="dv">3</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Observations, vegitation type, and gap status"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">"striped"</span>, <span class="st">"hover"</span>, <span class="st">"condensed"</span>, <span class="st">"responsive"</span>),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">position   =</span> <span class="st">"center"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">font_size  =</span> <span class="dv">14</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#A0185A"</span>) <span class="sc">%&gt;%</span>  <span class="co"># header</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(birds_sum), <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">background =</span> <span class="st">"#FFC4EB"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div class="table-responsive">
@@ -238,225 +281,231 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">NA</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">412254</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13692534 4579...</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">743355</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13687906 4587...</td>
 </tr>
 <tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">NA</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">158395</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13700033 4831...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">NA</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">127194</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691191 4691...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">NA</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">58674</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680646 4598...</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">243687</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13685845 4594...</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">240753</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13692302 4582...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">121851</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13692534 4579...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">103565</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13686406 4840...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">61220</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13669366 4673...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">58960</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13685011 4583...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">44734</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13621813 4524...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">9314</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691701 4584...</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">41029</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680223 4598...</td>
 </tr>
 <tr class="even">
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">8123</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691701 4584...</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">38306</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13683529 4589...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">38101</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13699698 4831...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">35525</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691191 4691...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">27910</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13690754 4692...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">18722</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691087 4815...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">14496</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13638564 4555...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">11422</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689482 4586...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">11026</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13700033 4831...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">7546</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13653029 4568...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">6641</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13637117 4590...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">6388</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13645196 4560...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5853</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13686374 4598...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5422</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680763 4596...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4417</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13653241 4567...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3101</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13533337 4944...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2661</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13686522 4840...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1631</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13529125 4930...</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">929</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13528973 4930...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">875</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13636104 4549...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">724</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13583861 4436...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">414</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13606214 4446...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">275</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13601440 4904...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">274</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13530977 4945...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">173</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13529793 4944...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">146</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13629145 4597...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">113</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13526798 4930...</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">93</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13696509 4827...</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">63</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">POINT (-13474625 4962967)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
 <td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">NA</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">6221</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13533337 4944...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4610</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4489</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689567 4587...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3014</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691054 4583...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2168</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680610 4597...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2037</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1930</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680763 4596...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1757</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13691701 4584...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1556</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689567 4587...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1521</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">CONIFER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1216</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13601859 4441...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1187</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">1089</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689567 4587...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HARDWOOD</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">889</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13617685 4501...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">2</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">792</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689567 4587...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">680</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680763 4596...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">646</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680763 4596...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">603</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">SHRUB</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">356</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13617685 4501...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">356</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680763 4596...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">HERBACEOUS</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">295</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13617685 4501...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">293</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">265</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">185</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680610 4597...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">5</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">155</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13689558 4587...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">WATER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">136</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13617685 4501...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">131</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13680763 4596...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">AGRICULTURE</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">103</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13601751 4441...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">4</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">98</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13662444 4581...</td>
-</tr>
-<tr class="even">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">BARREN/OTHER</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">78</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13601859 4441...</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">URBAN</td>
-<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">38</td>
-<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">MULTIPOINT ((-13601751 4441...</td>
+<td style="text-align: right; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">3</td>
+<td style="text-align: left; color: black !important; background-color: rgba(255, 196, 235, 255) !important;">POINT (-13700046 4627545)</td>
 </tr>
 </tbody>
 </table>
@@ -466,20 +515,86 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(veg_type)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">vect</span>(birds_sum), <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(veg_type)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">vect</span>(birds_sum), <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="spatial_join_exp_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="spatial_join_exp_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p><img src="site_points_animation.gif" class="img-fluid"></p>
-<p><img src="Obs_by_year.png" class="img-fluid"></p>
-<p><img src="obs_by_month.png" class="img-fluid"></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(gap_clean) <span class="sc">==</span> <span class="fu">crs</span>(point_area_geo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(point_area_geo) <span class="sc">==</span> <span class="fu">crs</span>(veg_type)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(gap_clean)<span class="sc">+</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(<span class="at">fill =</span> <span class="st">"gap_sts"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill.legend =</span> <span class="fu">tm_legend</span>(<span class="at">title =</span> <span class="st">"GAP Status"</span>),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">fill.scale =</span> <span class="fu">tm_scale</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">'green'</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">'yellow'</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">'#ED7D3A'</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                                               <span class="st">'#D33F49'</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">group =</span> <span class="st">'GAP Status'</span>))<span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(point_area_geo)<span class="sc">+</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="spatial_join_exp_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(veg_type)<span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_raster</span>()<span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(point_area_geo)<span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_dots</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="spatial_join_exp_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>birds_sum <span class="sc">%&gt;%</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> observations, <span class="at">x =</span> gap_sts, <span class="at">group=</span>gap_sts)) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">fill =</span> gap_sts),<span class="at">position =</span> <span class="st">'dodge'</span>)<span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>veg_type)<span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="spatial_join_exp_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 </main>
 <!-- /main column -->

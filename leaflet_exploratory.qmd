@@ -23,6 +23,18 @@ pacman::p_load('tidyverse',
                'leaflet.extras')
 ```
 
+Norcal bbox
+
+```{r}
+ca <- states(cb = TRUE) |>
+  filter(STUSPS == "CA") |>
+  st_transform(4326)
+
+bbox <- st_bbox(c(xmin = -125, xmax = -113, ymin = 37, ymax = 42), crs = 4326)
+norcal <- st_crop(ca, bbox)
+
+```
+
 Read Rast (calfire)
 
 ```{r}
@@ -39,9 +51,12 @@ veg_type <- habitat
 
 activeCat(veg_type, layer = 1) <- 'LIFEFORM'
 
-veg_type <- project(veg_type, "EPSG:4326") %>% 
-  aggregate(fact = 20)
+veg_type <- project(veg_type, "EPSG:4326") 
+
+veg_norcal <- crop(veg_type,norcal)
 ```
+
+
 
 Read GAP GDB
 
@@ -62,6 +77,8 @@ gap_clean <- gap %>%
   st_simplify(dTolerance = 0.01) %>%
   group_by(gap_sts) %>%
   summarise(geometry = st_union(Shape), .groups = 'drop')
+
+gap_norcal <- st_intersection(gap_clean, norcal)
 
 sf_use_s2(TRUE)
 ```
@@ -85,6 +102,8 @@ Join both and make Geodatabase
 ```{r}
 point_area_geo <- full_join(area_search, point_count) %>% 
   st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) 
+
+norcal_point_area <- st_intersection(point_area_geo, norcal)
 ```
 
 ## Leaflet layers
@@ -113,7 +132,7 @@ leaflet_map <- leaflet() %>%
               fillOpacity = 0.6) %>% 
   
   # Vegetation Type with colors
-  addRasterImage(veg_type,
+  addRasterImage(veg_norcal,
                  group = 'Vegetation Type',
                  opacity = 0.8) %>% 
   

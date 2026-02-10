@@ -5,6 +5,7 @@ editor: visual
 warning: FALSE
 code-fold: true
 ---
+
 Load packages
 
 ```{r}
@@ -21,6 +22,7 @@ pacman::p_load('tidyverse',
                'terra')
 ```
 
+
 Read Rast (calfire)
 
 ```{r}
@@ -31,7 +33,7 @@ gdb_path <- here::here('data','ds1327', 'ds1327.gdb')
 habitat <- rast(gdb_path)
 ```
 
- Read Landfire rast (removed 1/24)
+Read Landfire rast (removed 1/24)
 
 ```{r}
 # rast_path <- here::here('data', 'LF2024_FBFM13_250_CONUS', 'Tif', 'LC24_F13_250.tif')
@@ -40,7 +42,6 @@ habitat <- rast(gdb_path)
 
 ```
 
-
 ```{r}
 veg_type <- habitat
 
@@ -48,6 +49,14 @@ activeCat(veg_type, layer = 1) <- 'LIFEFORM'
 ```
 
 Read GAP GDB
+
+```{r}
+secretive <- read_csv(here('data', 'secretive_marshbird.csv')) %>% 
+  clean_names() %>% 
+  st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
+  st_transform(st_crs(veg_type))
+
+```
 
 ```{r}
 gap <- st_read(here::here('data',
@@ -73,21 +82,21 @@ Crop landfire to CA (removed 1/24)
 
 ```
 
-
 Read Point Count
 
 ```{r}
 point_count <- read_csv(here::here('data', 'point_count.csv')) %>% 
   clean_names()
 ```
-Read area search 
+
+Read area search
 
 ```{r}
 area_search <- read_csv(here::here('data', 'area_search.csv')) %>% 
   clean_names()
 ```
 
-Join both and make Geodatabase 
+Join both and make Geodatabase
 
 ```{r}
 point_area_geo <- full_join(area_search, point_count) %>% 
@@ -95,14 +104,14 @@ point_area_geo <- full_join(area_search, point_count) %>%
   st_transform(st_crs(veg_type))
 ```
 
-Join with GAP 
+Join with GAP
 
 ```{r}
 birds_joined <- st_join(point_area_geo, gap_clean["gap_sts"])
 
 ```
 
-Summary of by gap type 
+Summary of by gap type
 
 ```{r}
 birds_gap_sum <- birds_joined %>% 
@@ -131,8 +140,7 @@ Landfire join
 #birds_joined$gap_sts[is.na(birds_joined$gap_sts)] <- 5
 ```
 
-
-summary of gap status and veg_type 
+summary of gap status and veg_type
 
 ```{r}
 birds_sum <- birds_joined %>% 
@@ -153,7 +161,6 @@ birds_sum %>%
   row_spec(1:nrow(birds_sum), color = "black", background = "#FFC4EB")
 ```
 
-
 ```{r}
 plot(veg_type)
 plot(vect(birds_sum), add = TRUE)
@@ -164,30 +171,28 @@ crs(gap_clean) == crs(point_area_geo)
 crs(point_area_geo) == crs(veg_type)
 
 
-
 tm_shape(gap_clean)+
   tm_polygons(fill = "gap_sts",
               fill.legend = tm_legend(title = "GAP Status"),
-              fill.scale = tm_scale(values = c('#D33F49',
+              fill.scale = tm_scale(values = c('green',
+                                               'yellow',
                                                '#ED7D3A',
-                                               '#DCED31',
-                                               '#8AA29E')),
-              lty = 'blank')+
+                                               '#D33F49'),
+                                    group = 'GAP Status'))+
 tm_shape(point_area_geo)+
-  tm_dots()+
-tm_shape(secretive)+
-    tm_dots(fill = 'red')
+  tm_dots()
 ```
+
 
 ```{r}
-secretive <- read_csv(here('data', 'secretive_marshbird.csv')) %>% 
-  clean_names() %>% 
-  st_as_sf(coords = c("decimal_longitude", "decimal_latitude"), crs = 4326) %>% 
-  st_transform(st_crs(veg_type))
-
+tm_shape(veg_type)+
+  tm_raster()+
+tm_shape(point_area_geo)+
+  tm_dots()
 ```
 
-## Leaflet layers 
+
+
 
 ```{r}
 birds_sum %>% 
@@ -196,6 +201,3 @@ birds_sum %>%
   facet_wrap(~veg_type)+
   coord_flip()
 ```
-
-
-
